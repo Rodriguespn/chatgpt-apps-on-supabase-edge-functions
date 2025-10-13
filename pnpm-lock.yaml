@@ -10,6 +10,9 @@ importers:
 
   apps/server:
     dependencies:
+      '@mcp-ui/server':
+        specifier: ^5.11.0
+        version: 5.11.0
       '@modelcontextprotocol/sdk':
         specifier: ^1.0.0
         version: 1.20.0
@@ -455,6 +458,9 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@mcp-ui/server@5.11.0':
+    resolution: {integrity: sha512-DLakzSNA17XsViC+YYQxy2ViVtdJu0SDxQeAIviguXFq58qACvDC5tMFTNn2c0vMB5qfXqz0HLZImE3hHd3C8g==}
 
   '@modelcontextprotocol/sdk@1.20.0':
     resolution: {integrity: sha512-kOQ4+fHuT4KbR2iq2IjeV32HiihueuOf1vJkq18z08CLZ1UQrTc8BXJpVfxZkq45+inLLD+D4xx4nBjUelJa4Q==}
@@ -1572,6 +1578,12 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@mcp-ui/server@5.11.0':
+    dependencies:
+      '@modelcontextprotocol/sdk': 1.20.0
+    transitivePeerDependencies:
+      - supports-color
 
   '@modelcontextprotocol/sdk@1.20.0':
     dependencies:

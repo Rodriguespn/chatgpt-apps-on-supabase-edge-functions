@@ -5,6 +5,7 @@
  * that displays fridge contents stored on the server.
  */
 
+import { createUIResource } from '@mcp-ui/server';
 import type { FridgeData, FridgeItem, ItemStatus, ItemCategory, QuantityUnit } from '../types/fridge.js';
 import { mockFridgeData } from '../data/mockFridgeData.js';
 
@@ -81,11 +82,21 @@ export function getWidgetHTML(): string {
 
 /**
  * Tool handler for the fridge widget
- * Returns the fridge data stored on the server as JSON
+ * Returns the fridge data stored on the server as JSON with UI resource
  */
 export async function handleFridgeWidget() {
   // Get fridge data from server storage (mock for now)
   const fridgeData = mockFridgeData;
+
+  // Create UI resource using @mcp-ui/server
+  const uiResource = createUIResource({
+    uri: 'ui://fridge-widget',
+    content: {
+      type: 'rawHtml',
+      htmlString: getWidgetHTML(),
+    },
+    encoding: 'text',
+  });
 
   return {
     structuredContent: fridgeData,
@@ -94,32 +105,31 @@ export async function handleFridgeWidget() {
         type: 'text',
         text: JSON.stringify(fridgeData, null, 2),
       },
-       {
-        type: 'resource',
-        resource: {
-          uri: 'ui://widget',
-          mimeType: 'text/html',
-          text: getWidgetHTML()
-        },
-      },
+      uiResource,
     ],
   };
 }
 
 /**
  * Resource handler for the fridge widget
- * Returns the widget HTML without data (data will be passed via toolOutput prop)
+ * Returns the widget HTML as a resource (for direct resource requests)
  */
 export async function handleFridgeWidgetResource() {
-  const html = getWidgetHTML();
+  // Create UI resource using @mcp-ui/server
+  const uiResource = createUIResource({
+    uri: 'ui://fridge-widget',
+    content: {
+      type: 'rawHtml',
+      htmlString: getWidgetHTML(),
+    },
+    encoding: 'text',
+  });
+  uiResource.resource.mimeType = 'text/html+skybridge';
 
+  // Extract the resource object from the UIResource
   return {
     contents: [
-      {
-        uri: 'ui://widget',
-        mimeType: 'text/html+skybridge',
-        text: html,
-      },
+      uiResource.resource,
     ],
   };
 }

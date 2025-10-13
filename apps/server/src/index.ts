@@ -48,7 +48,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           type: 'object',
           properties: {},
         },
-        _meta: { "openai/outputTemplate": "ui://widget" },
+        _meta: { "openai/outputTemplate": "ui://fridge-widget" },
       },
       {
         name: 'add_fridge_item',
@@ -120,7 +120,7 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => {
   return {
     resources: [
       {
-        uri: 'ui://widget',
+        uri: 'ui://fridge-widget',
         name: 'Fridge Widget',
         description: 'Interactive widget displaying fridge contents',
         mimeType: 'text/html+skybridge',
@@ -133,7 +133,7 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => {
 server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   const { uri } = request.params;
 
-  if (uri === 'ui://widget') {
+  if (uri === 'ui://fridge-widget') {
     return await handleFridgeWidgetResource();
   }
 
