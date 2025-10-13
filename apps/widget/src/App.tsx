@@ -38,12 +38,12 @@ function App({ fridgeData: fridgeDataProp }: AppProps) {
         const renderData = event.data.payload?.renderData;
 
         if (renderData) {
-          // The fridge data is merged into renderData under the 'fridge' key by the adapter
-          // Check if renderData.fridge exists and has the expected properties
-          if (renderData.fridge && renderData.fridge.id && renderData.fridge.zones) {
-            console.log('[Widget Debug] Setting fridge data from renderData.fridge');
+          // The fridge data is in renderData.toolOutput.fridge
+          // Check if renderData.toolOutput.fridge exists and has the expected properties
+          if (renderData.toolOutput?.fridge && renderData.toolOutput.fridge.id && renderData.toolOutput.fridge.zones) {
+            console.log('[Widget Debug] Setting fridge data from renderData.toolOutput.fridge');
             // Wrap the fridge object in the FridgeData structure expected by FridgeView
-            setFridgeData({ fridge: renderData.fridge } as FridgeData);
+            setFridgeData({ fridge: renderData.toolOutput.fridge } as FridgeData);
           } else {
             console.log('[Widget Debug] renderData does not contain valid fridge data:', renderData);
           }

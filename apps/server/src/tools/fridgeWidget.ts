@@ -5,7 +5,7 @@
  * that displays fridge contents stored on the server.
  */
 
-import { createUIResource } from '@mcp-ui/server';
+import { createUIResource, getAppsSdkAdapterScript } from '@mcp-ui/server';
 import type { FridgeData, FridgeItem, ItemStatus, ItemCategory, QuantityUnit } from '../types/fridge.js';
 import { mockFridgeData } from '../data/mockFridgeData.js';
 
@@ -36,6 +36,9 @@ function calculateItemStatus(expirationDate?: string): ItemStatus {
  * Widget assets (JS/CSS) are served as external resources from /static/widget/assets/
  */
 export function getWidgetHTML(): string {
+  // Get the built-in adapter script from @mcp-ui/server
+  const adapterScript = getAppsSdkAdapterScript();
+
   // Build a custom HTML that dynamically loads external assets
   const widgetHTML = `<!DOCTYPE html>
 <html lang="en">
@@ -43,6 +46,9 @@ export function getWidgetHTML(): string {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fridge Widget</title>
+    <script>
+      ${adapterScript}
+    </script>
     <script>
       // Dynamically load CSS and JS based on base URL
       (function() {
@@ -54,12 +60,6 @@ export function getWidgetHTML(): string {
         link.crossOrigin = 'anonymous';
         link.href = baseUrl + '/static/widget/assets/style.css';
         document.head.appendChild(link);
-
-        // Load adapter script
-        var adapterScript = document.createElement('script');
-        adapterScript.src = baseUrl + '/static/js/mcpui-bridge.js';
-        adapterScript.async = false;
-        document.head.appendChild(adapterScript);
 
         // Load widget script
         var widgetScript = document.createElement('script');
@@ -75,7 +75,7 @@ export function getWidgetHTML(): string {
   </body>
 </html>`;
 
-  console.error('[getWidgetHTML] Generated HTML with external assets');
+  console.error('[getWidgetHTML] Generated HTML with external assets and built-in adapter');
 
   return widgetHTML;
 }
@@ -123,8 +123,12 @@ export async function handleFridgeWidgetResource() {
       htmlString: getWidgetHTML(),
     },
     encoding: 'text',
+    adapters: {
+      appsSdk: {
+        enabled: true
+      }
+    }
   });
-  uiResource.resource.mimeType = 'text/html+skybridge';
 
   // Extract the resource object from the UIResource
   return {
