@@ -1,4 +1,4 @@
-import type { FridgeData } from '../types/fridge.js';
+import type { FridgeData } from '../types/fridge.ts';
 
 /**
  * Mock fridge data stored on the server

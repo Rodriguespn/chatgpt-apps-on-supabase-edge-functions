@@ -7,15 +7,11 @@
 
 import { createUIResource, getAppsSdkAdapterScript } from '@mcp-ui/server';
 import type { UIResource } from '@mcp-ui/server';
-import type { FridgeData, FridgeItem, ItemStatus, ItemCategory, QuantityUnit } from '../types/fridge.js';
-import { mockFridgeData } from '../data/mockFridgeData.js';
-import { readFileSync } from 'fs';
-import { join } from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import type { FridgeData, FridgeItem, ItemStatus, ItemCategory, QuantityUnit } from '../types/fridge.ts';
+import { mockFridgeData } from '../data/mockFridgeData.ts';
+import { dirname, join } from '@std/path';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = dirname(new URL(import.meta.url).pathname);
 
 /**
  * Calculate item status based on expiration date
@@ -55,7 +51,7 @@ export function getWidgetHTML(): string {
   let widgetJS = '';
 
   try {
-    widgetCSS = readFileSync(join(widgetDistPath, 'style.css'), 'utf-8');
+    widgetCSS = Deno.readTextFileSync(join(widgetDistPath, 'style.css'));
     console.error('[getWidgetHTML] Loaded style.css from', join(widgetDistPath, 'style.css'));
     console.error('[getWidgetHTML] CSS length:', widgetCSS.length);
   } catch (error) {
@@ -63,7 +59,7 @@ export function getWidgetHTML(): string {
   }
 
   try {
-    widgetJS = readFileSync(join(widgetDistPath, 'index.js'), 'utf-8');
+    widgetJS = Deno.readTextFileSync(join(widgetDistPath, 'index.js'));
     console.error('[getWidgetHTML] Loaded index.js from', join(widgetDistPath, 'index.js'));
     console.error('[getWidgetHTML] JS length:', widgetJS.length);
     // Check if the new log is present

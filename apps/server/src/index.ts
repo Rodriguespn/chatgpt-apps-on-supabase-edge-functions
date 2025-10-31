@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env -S deno run --allow-net --allow-read --allow-env
 
 /**
  * MCP Server for Fridge Widget
@@ -8,14 +8,12 @@
  */
 
 import express from 'express';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { dirname, join } from '@std/path';
 import { McpServer, StreamableHttpTransport } from 'mcp-lite';
 import { z } from 'zod';
-import { handleFridgeWidget, handleFridgeWidgetResource, handleAddItem } from './tools/fridgeWidget.js';
+import { handleFridgeWidget, handleFridgeWidgetResource, handleAddItem } from './tools/fridgeWidget.ts';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = dirname(new URL(import.meta.url).pathname);
 
 // Create the MCP server using mcp-lite
 export const server = new McpServer({
@@ -73,7 +71,7 @@ app.use(express.json());
 
 // Serve static files (adapter script) with proper MIME types and CORS headers
 app.use('/static', express.static(join(__dirname, '../static'), {
-  setHeaders: (res, path) => {
+  setHeaders: (res: any, path: string) => {
     // Set CORS headers to allow cross-origin requests
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -89,13 +87,13 @@ app.use('/static', express.static(join(__dirname, '../static'), {
 }));
 
 // Health check endpoint
-app.get('/health', (_req, res) => {
+app.get('/health', (_req: any, res: any) => {
   res.json({ status: 'ok', server: 'fridge-widget-mcp' });
 });
 
 // Test endpoint to view the widget HTML directly in browser
-app.get('/test-widget', (_req, res) => {
-  const { getWidgetHTML } = require('./tools/fridgeWidget.js');
+app.get('/test-widget', async (_req: any, res: any) => {
+  const { getWidgetHTML } = await import('./tools/fridgeWidget.ts');
   const html = getWidgetHTML();
   res.setHeader('Content-Type', 'text/html');
   res.send(html);
@@ -130,19 +128,19 @@ app.all('/mcp', async (req: any, res: any) => {
   // Stream the response body
   if (response.body) {
     const reader = response.body.getReader();
-    
+
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      res.write(Buffer.from(value));
+      res.write(value);
     }
   }
-  
+
   res.end();
 });
 
 // Start the server
-const PORT = process.env.PORT || 3000;
+const PORT = Deno.env.get('PORT') || 3000;
 
 app.listen(PORT, () => {
   console.error(`Fridge Widget MCP Server running on http://localhost:${PORT}`);

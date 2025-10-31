@@ -1,7 +1,9 @@
 {
   "tasks": {
-    "dev": "deno run --allow-net --allow-read --allow-env --watch src/index.ts",
-    "start": "deno run --allow-net --allow-read --allow-env src/index.ts",
+    "dev": "cd apps/server && deno task dev",
+    "start": "cd apps/server && deno task start",
+    "server:dev": "cd apps/server && deno task dev",
+    "server:start": "cd apps/server && deno task start",
     "widget:dev": "cd apps/widget && deno task dev",
     "widget:build": "cd apps/widget && deno task build",
     "widget:preview": "cd apps/widget && deno task preview",
