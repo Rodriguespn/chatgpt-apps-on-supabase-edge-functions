@@ -13,7 +13,13 @@
     "build": "pnpm --filter @mcp-adapter-test/widget build && pnpm --filter @mcp-adapter-test/server build",
     "dev": "pnpm --parallel --filter @mcp-adapter-test/widget --filter @mcp-adapter-test/server dev"
   },
-  "keywords": ["mcp", "mcp-ui", "chatgpt", "widget", "fridge"],
-  "author": "",
+  "keywords": [
+    "mcp",
+    "mcp-ui",
+    "chatgpt",
+    "widget",
+    "fridge"
+  ],
+  "author": "Pedro Rodrigues",
   "license": "MIT"
 }
