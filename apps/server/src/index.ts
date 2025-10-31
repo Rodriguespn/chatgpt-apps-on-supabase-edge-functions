@@ -1,5 +1,3 @@
-#!/usr/bin/env -S deno run --allow-net --allow-read --allow-env
-
 /**
  * MCP Server for Fridge Widget
  *
@@ -68,32 +66,27 @@ server.resource(
 // Create Hono app
 const app = new Hono();
 
+const mcpApp = new Hono();
+
 // Add CORS middleware
-app.use('*', cors());
+mcpApp.use('*', cors());
 
 // Serve static files with proper MIME types
-app.use('/static/*', serveStatic({
+mcpApp.use('/static/*', serveStatic({
   root: './',
   rewriteRequestPath: (path: string) => path.replace(/^\/static/, '/static')
 }));
 
 // Health check endpoint
-app.get('/health', (c: Context) => {
+mcpApp.get('/health', (c: Context) => {
   return c.json({ status: 'ok', server: 'fridge-widget-mcp' });
-});
-
-// Test endpoint to view the widget HTML directly in browser
-app.get('/test-widget', async (c: Context) => {
-  const { getWidgetHTML } = await import('./tools/fridgeWidget.ts');
-  const html = getWidgetHTML();
-  return c.html(html);
 });
 
 // MCP endpoint using StreamableHTTP transport from mcp-lite
 const transport = new StreamableHttpTransport();
 const mcpHandler = transport.bind(server);
 
-app.all('/mcp', async (c: Context) => {
+mcpApp.all('/mcp', async (c: Context) => {
   console.error('New MCP request received');
 
   // Hono's request is already a standard Request object
@@ -105,6 +98,8 @@ app.all('/mcp', async (c: Context) => {
   // Return the response directly - Hono will handle streaming
   return response;
 });
+
+app.route('/', mcpApp);
 
 // Start the server
 const PORT = Number(Deno.env.get('PORT')) || 3000;
