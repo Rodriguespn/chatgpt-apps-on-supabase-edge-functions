@@ -7,13 +7,13 @@
  * Uses HTTP streamable transport.
  */
 
-import express from 'express';
-import { dirname, join } from '@std/path';
+import { Hono } from 'hono';
+import { serveStatic } from 'hono/deno';
+import { cors } from 'hono/cors';
+import type { Context } from 'hono';
 import { McpServer, StreamableHttpTransport } from 'mcp-lite';
 import { z } from 'zod';
 import { handleFridgeWidget, handleFridgeWidgetResource, handleAddItem } from './tools/fridgeWidget.ts';
-
-const __dirname = dirname(new URL(import.meta.url).pathname);
 
 // Create the MCP server using mcp-lite
 export const server = new McpServer({
@@ -65,85 +65,52 @@ server.resource(
   }
 );
 
-// Create Express app
-const app = express();
-app.use(express.json());
+// Create Hono app
+const app = new Hono();
 
-// Serve static files (adapter script) with proper MIME types and CORS headers
-app.use('/static', express.static(join(__dirname, '../static'), {
-  setHeaders: (res: any, path: string) => {
-    // Set CORS headers to allow cross-origin requests
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+// Add CORS middleware
+app.use('*', cors());
 
-    // Set proper MIME types
-    if (path.endsWith('.js')) {
-      res.setHeader('Content-Type', 'application/javascript; charset=UTF-8');
-    } else if (path.endsWith('.css')) {
-      res.setHeader('Content-Type', 'text/css; charset=UTF-8');
-    }
-  }
+// Serve static files with proper MIME types
+app.use('/static/*', serveStatic({
+  root: './',
+  rewriteRequestPath: (path: string) => path.replace(/^\/static/, '/static')
 }));
 
 // Health check endpoint
-app.get('/health', (_req: any, res: any) => {
-  res.json({ status: 'ok', server: 'fridge-widget-mcp' });
+app.get('/health', (c: Context) => {
+  return c.json({ status: 'ok', server: 'fridge-widget-mcp' });
 });
 
 // Test endpoint to view the widget HTML directly in browser
-app.get('/test-widget', async (_req: any, res: any) => {
+app.get('/test-widget', async (c: Context) => {
   const { getWidgetHTML } = await import('./tools/fridgeWidget.ts');
   const html = getWidgetHTML();
-  res.setHeader('Content-Type', 'text/html');
-  res.send(html);
+  return c.html(html);
 });
 
 // MCP endpoint using StreamableHTTP transport from mcp-lite
 const transport = new StreamableHttpTransport();
 const mcpHandler = transport.bind(server);
 
-app.all('/mcp', async (req: any, res: any) => {
+app.all('/mcp', async (c: Context) => {
   console.error('New MCP request received');
-  
-  // Convert Express request to standard Request object
-  const url = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
-  const request = new Request(url, {
-    method: req.method,
-    headers: req.headers,
-    body: req.method !== 'GET' && req.method !== 'HEAD' ? JSON.stringify(req.body) : undefined,
-  });
-  
+
+  // Hono's request is already a standard Request object
+  const request = c.req.raw;
+
   // Handle with mcp-lite
   const response = await mcpHandler(request);
-  
-  // Copy headers from response
-  response.headers.forEach((value: string, key: string) => {
-    res.setHeader(key, value);
-  });
-  
-  // Set status
-  res.status(response.status);
-  
-  // Stream the response body
-  if (response.body) {
-    const reader = response.body.getReader();
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      res.write(value);
-    }
-  }
-
-  res.end();
+  // Return the response directly - Hono will handle streaming
+  return response;
 });
 
 // Start the server
-const PORT = Deno.env.get('PORT') || 3000;
+const PORT = Number(Deno.env.get('PORT')) || 3000;
 
-app.listen(PORT, () => {
-  console.error(`Fridge Widget MCP Server running on http://localhost:${PORT}`);
-  console.error(`MCP endpoint: http://localhost:${PORT}/mcp`);
-  console.error(`Health check: http://localhost:${PORT}/health`);
-});
+Deno.serve({ port: PORT }, app.fetch);
+
+console.error(`Fridge Widget MCP Server running on http://localhost:${PORT}`);
+console.error(`MCP endpoint: http://localhost:${PORT}/mcp`);
+console.error(`Health check: http://localhost:${PORT}/health`);
