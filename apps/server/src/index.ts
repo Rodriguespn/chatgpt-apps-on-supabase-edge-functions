@@ -18,7 +18,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Create the MCP server using mcp-lite
-const server = new McpServer({
+export const server = new McpServer({
   name: 'fridge-widget-server',
   version: '1.0.0',
   schemaAdapter: (schema) => z.toJSONSchema(schema as z.ZodType),
