@@ -52,24 +52,24 @@ export function getWidgetHTML(): string {
 
   try {
     widgetCSS = Deno.readTextFileSync(join(widgetDistPath, 'style.css'));
-    console.error('[getWidgetHTML] Loaded style.css from', join(widgetDistPath, 'style.css'));
-    console.error('[getWidgetHTML] CSS length:', widgetCSS.length);
+    console.info('[getWidgetHTML] Loaded style.css from', join(widgetDistPath, 'style.css'));
+    console.info('[getWidgetHTML] CSS length:', widgetCSS.length);
   } catch (error) {
-    console.error('[getWidgetHTML] Failed to load style.css:', error);
+    console.info('[getWidgetHTML] Failed to load style.css:', error);
   }
 
   try {
     widgetJS = Deno.readTextFileSync(join(widgetDistPath, 'index.js'));
-    console.error('[getWidgetHTML] Loaded index.js from', join(widgetDistPath, 'index.js'));
-    console.error('[getWidgetHTML] JS length:', widgetJS.length);
+    console.info('[getWidgetHTML] Loaded index.js from', join(widgetDistPath, 'index.js'));
+    console.info('[getWidgetHTML] JS length:', widgetJS.length);
     // Check if the new log is present
     if (widgetJS.includes('Setting up ResizeObserver for appRef')) {
-      console.error('[getWidgetHTML] ✓ Found new ResizeObserver log in widget code');
+      console.info('[getWidgetHTML] ✓ Found new ResizeObserver log in widget code');
     } else {
-      console.error('[getWidgetHTML] ✗ ResizeObserver log NOT found - old version loaded?');
+      console.info('[getWidgetHTML] ✗ ResizeObserver log NOT found - old version loaded?');
     }
   } catch (error) {
-    console.error('[getWidgetHTML] Failed to load index.js:', error);
+    console.info('[getWidgetHTML] Failed to load index.js:', error);
   }
 
   // Build HTML with inline assets
@@ -94,7 +94,7 @@ export function getWidgetHTML(): string {
   </body>
 </html>`;
 
-  console.error('[getWidgetHTML] Generated HTML with inline assets');
+  console.info('[getWidgetHTML] Generated HTML with inline assets');
 
   return widgetHTML;
 }
