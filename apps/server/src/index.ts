@@ -166,6 +166,14 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok', server: 'fridge-widget-mcp' });
 });
 
+// Test endpoint to view the widget HTML directly in browser
+app.get('/test-widget', (_req, res) => {
+  const { getWidgetHTML } = require('./tools/fridgeWidget.js');
+  const html = getWidgetHTML();
+  res.setHeader('Content-Type', 'text/html');
+  res.send(html);
+});
+
 // MCP endpoint using StreamableHTTP transport
 app.post('/mcp', async (req, res) => {
   console.error('New MCP request received');

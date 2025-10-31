@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { FridgeData } from './types/fridge';
 import FridgeView from './components/FridgeView';
 import './App.css';
@@ -16,11 +16,40 @@ interface AppProps {
 
 function App({ fridgeData: fridgeDataProp }: AppProps) {
   const [fridgeData, setFridgeData] = useState<FridgeData | null>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
   // Debug: Log all props received
   console.log('[Widget Debug] App props:', { fridgeDataProp });
   console.log('[Widget Debug] fridgeDataProp type:', typeof fridgeDataProp);
   console.log('[Widget Debug] fridgeDataProp value:', JSON.stringify(fridgeDataProp, null, 2));
+
+  // Callback ref for the app container - called when DOM element is attached
+  const appRef = (element: HTMLDivElement | null) => {
+    console.log('[Widget Debug] appRef callback called with element:', element);
+
+    if (element && !resizeObserverRef.current) {
+      console.log('[Widget Debug] Setting up ResizeObserver for app element');
+
+      const resizeObserver = new ResizeObserver((entries) => {
+        console.log('[Widget Debug] ResizeObserver entries:', entries);
+        entries.forEach((entry) => {
+          window.parent.postMessage(
+            {
+              type: "ui-size-change",
+              payload: {
+                height: entry.contentRect.height,
+              },
+            },
+            "*"
+          );
+        });
+      });
+
+      resizeObserver.observe(element);
+      resizeObserverRef.current = resizeObserver;
+      console.log('[Widget Debug] Observing app element for size changes');
+    }
+  };
 
   useEffect(() => {
     // Log all message events received by the widget
@@ -59,6 +88,10 @@ function App({ fridgeData: fridgeDataProp }: AppProps) {
     window.parent.postMessage({ type: "ui-lifecycle-iframe-ready" }, "*");
 
     return () => {
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
+      }
       window.removeEventListener('message', handleMessage);
       console.log('[Widget Debug] Message event listener removed');
     };
@@ -104,7 +137,7 @@ function App({ fridgeData: fridgeDataProp }: AppProps) {
   }
 
   return (
-    <div className="app">
+    <div ref={appRef} className="app">
       <div className="recipe-actions">
         <button className="recipe-button" onClick={handleRecipeRequest}>
           Propose me recipes

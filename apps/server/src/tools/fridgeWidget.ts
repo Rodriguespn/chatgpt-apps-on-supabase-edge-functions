@@ -6,8 +6,16 @@
  */
 
 import { createUIResource, getAppsSdkAdapterScript } from '@mcp-ui/server';
+import type { UIResource } from '@mcp-ui/server';
 import type { FridgeData, FridgeItem, ItemStatus, ItemCategory, QuantityUnit } from '../types/fridge.js';
 import { mockFridgeData } from '../data/mockFridgeData.js';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 /**
  * Calculate item status based on expiration date
@@ -33,41 +41,56 @@ function calculateItemStatus(expirationDate?: string): ItemStatus {
 /**
  * Loads the widget HTML and injects the adapter script
  * Data will be provided by the adapter layer via toolOutput prop
- * Widget assets (JS/CSS) are served as external resources from /static/widget/assets/
+ * Widget assets (JS/CSS) are embedded inline
  */
 export function getWidgetHTML(): string {
   // Get the built-in adapter script from @mcp-ui/server
   const adapterScript = getAppsSdkAdapterScript();
 
-  // Build a custom HTML that dynamically loads external assets
+  // Read the built widget files from apps/widget/dist/assets/
+  // The path from dist/tools/ is: ../../../widget/dist/assets/
+  const widgetDistPath = join(__dirname, '../../../widget/dist/assets');
+
+  let widgetCSS = '';
+  let widgetJS = '';
+
+  try {
+    widgetCSS = readFileSync(join(widgetDistPath, 'style.css'), 'utf-8');
+    console.error('[getWidgetHTML] Loaded style.css from', join(widgetDistPath, 'style.css'));
+    console.error('[getWidgetHTML] CSS length:', widgetCSS.length);
+  } catch (error) {
+    console.error('[getWidgetHTML] Failed to load style.css:', error);
+  }
+
+  try {
+    widgetJS = readFileSync(join(widgetDistPath, 'index.js'), 'utf-8');
+    console.error('[getWidgetHTML] Loaded index.js from', join(widgetDistPath, 'index.js'));
+    console.error('[getWidgetHTML] JS length:', widgetJS.length);
+    // Check if the new log is present
+    if (widgetJS.includes('Setting up ResizeObserver for appRef')) {
+      console.error('[getWidgetHTML] ✓ Found new ResizeObserver log in widget code');
+    } else {
+      console.error('[getWidgetHTML] ✗ ResizeObserver log NOT found - old version loaded?');
+    }
+  } catch (error) {
+    console.error('[getWidgetHTML] Failed to load index.js:', error);
+  }
+
+  // Build HTML with inline assets
   const widgetHTML = `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fridge Widget</title>
+    <style>
+      ${widgetCSS}
+    </style>
     <script>
       ${adapterScript}
     </script>
-    <script>
-      // Dynamically load CSS and JS based on base URL
-      (function() {
-        var baseUrl = window.innerBaseUrl || 'https://fridge.mcp.intelunix.fr';
-
-        // Load CSS
-        var link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.crossOrigin = 'anonymous';
-        link.href = baseUrl + '/static/widget/assets/style.css';
-        document.head.appendChild(link);
-
-        // Load widget script
-        var widgetScript = document.createElement('script');
-        widgetScript.type = 'module';
-        widgetScript.crossOrigin = 'anonymous';
-        widgetScript.src = baseUrl + '/static/widget/assets/index.js';
-        document.head.appendChild(widgetScript);
-      })();
+    <script type="module">
+      ${widgetJS}
     </script>
   </head>
   <body>
@@ -75,7 +98,7 @@ export function getWidgetHTML(): string {
   </body>
 </html>`;
 
-  console.error('[getWidgetHTML] Generated HTML with external assets and built-in adapter');
+  console.error('[getWidgetHTML] Generated HTML with inline assets');
 
   return widgetHTML;
 }
@@ -114,7 +137,9 @@ export async function handleFridgeWidget() {
  * Resource handler for the fridge widget
  * Returns the widget HTML as a resource (for direct resource requests)
  */
-export async function handleFridgeWidgetResource() {
+export async function handleFridgeWidgetResource(): Promise<{
+  contents: Array<UIResource['resource']>;
+}> {
   // Create UI resource using @mcp-ui/server
   const uiResource = createUIResource({
     uri: 'ui://fridge-widget',
