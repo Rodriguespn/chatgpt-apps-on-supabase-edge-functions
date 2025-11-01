@@ -5,17 +5,13 @@
  * that displays fridge contents stored on the server.
  */
 
-import { createUIResource, getAppsSdkAdapterScript } from '@mcp-ui/server';
-import type { UIResource } from '@mcp-ui/server';
-import type { FridgeData, FridgeItem, ItemStatus, ItemCategory, QuantityUnit } from '../types/fridge.js';
-import { mockFridgeData } from '../data/mockFridgeData.js';
-import { readFileSync } from 'fs';
-import { join } from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { createUIResource, getAppsSdkAdapterScript } from 'npm:@mcp-ui/server@5.12.0-alpha.5';
+import type { UIResource } from 'npm:@mcp-ui/server@5.12.0-alpha.5';
+import type { FridgeItem, ItemStatus, ItemCategory, QuantityUnit } from '../types/fridge.ts';
+import { mockFridgeData } from '../data/mockFridgeData.ts';
+import { dirname, join } from 'jsr:@std/path@^1.0.8';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = dirname(new URL(import.meta.url).pathname);
 
 /**
  * Calculate item status based on expiration date
@@ -47,33 +43,33 @@ export function getWidgetHTML(): string {
   // Get the built-in adapter script from @mcp-ui/server
   const adapterScript = getAppsSdkAdapterScript();
 
-  // Read the built widget files from apps/widget/dist/assets/
-  // The path from dist/tools/ is: ../../../widget/dist/assets/
-  const widgetDistPath = join(__dirname, '../../../widget/dist/assets');
+  // Read the built widget files from widget/dist/
+  // For edge functions, the path is relative to the function root
+  const widgetDistPath = join(__dirname, '../../widget/dist');
 
   let widgetCSS = '';
   let widgetJS = '';
 
   try {
-    widgetCSS = readFileSync(join(widgetDistPath, 'style.css'), 'utf-8');
-    console.error('[getWidgetHTML] Loaded style.css from', join(widgetDistPath, 'style.css'));
-    console.error('[getWidgetHTML] CSS length:', widgetCSS.length);
+    widgetCSS = Deno.readTextFileSync(join(widgetDistPath, 'style.css'));
+    console.info('[getWidgetHTML] Loaded style.css from', join(widgetDistPath, 'style.css'));
+    console.info('[getWidgetHTML] CSS length:', widgetCSS.length);
   } catch (error) {
-    console.error('[getWidgetHTML] Failed to load style.css:', error);
+    console.info('[getWidgetHTML] Failed to load style.css:', error);
   }
 
   try {
-    widgetJS = readFileSync(join(widgetDistPath, 'index.js'), 'utf-8');
-    console.error('[getWidgetHTML] Loaded index.js from', join(widgetDistPath, 'index.js'));
-    console.error('[getWidgetHTML] JS length:', widgetJS.length);
+    widgetJS = Deno.readTextFileSync(join(widgetDistPath, 'index.js'));
+    console.info('[getWidgetHTML] Loaded index.js from', join(widgetDistPath, 'index.js'));
+    console.info('[getWidgetHTML] JS length:', widgetJS.length);
     // Check if the new log is present
     if (widgetJS.includes('Setting up ResizeObserver for appRef')) {
-      console.error('[getWidgetHTML] ✓ Found new ResizeObserver log in widget code');
+      console.info('[getWidgetHTML] ✓ Found new ResizeObserver log in widget code');
     } else {
-      console.error('[getWidgetHTML] ✗ ResizeObserver log NOT found - old version loaded?');
+      console.info('[getWidgetHTML] ✗ ResizeObserver log NOT found - old version loaded?');
     }
   } catch (error) {
-    console.error('[getWidgetHTML] Failed to load index.js:', error);
+    console.info('[getWidgetHTML] Failed to load index.js:', error);
   }
 
   // Build HTML with inline assets
@@ -98,7 +94,7 @@ export function getWidgetHTML(): string {
   </body>
 </html>`;
 
-  console.error('[getWidgetHTML] Generated HTML with inline assets');
+  console.info('[getWidgetHTML] Generated HTML with inline assets');
 
   return widgetHTML;
 }
