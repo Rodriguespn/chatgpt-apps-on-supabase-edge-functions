@@ -7,7 +7,7 @@
 
 import { createUIResource, getAppsSdkAdapterScript } from 'npm:@mcp-ui/server@5.12.0-alpha.5';
 import type { UIResource } from 'npm:@mcp-ui/server@5.12.0-alpha.5';
-import type { FridgeData, FridgeItem, ItemStatus, ItemCategory, QuantityUnit } from '../types/fridge.ts';
+import type { FridgeItem, ItemStatus, ItemCategory, QuantityUnit } from '../types/fridge.ts';
 import { mockFridgeData } from '../data/mockFridgeData.ts';
 import { dirname, join } from 'jsr:@std/path@^1.0.8';
 

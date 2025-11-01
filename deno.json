@@ -1,15 +1,7 @@
 {
   "tasks": {
-    "dev": "cd apps/server && deno task dev",
-    "start": "cd apps/server && deno task start",
-    "server:dev": "cd apps/server && deno task dev",
-    "server:start": "cd apps/server && deno task start",
-    "widget:dev": "cd apps/widget && deno task dev",
-    "widget:build": "cd apps/widget && deno task build",
-    "widget:preview": "cd apps/widget && deno task preview",
-    "build": "deno task widget:build",
-    "supabase:serve": "supabase functions serve mcp-server --no-verify-jwt",
-    "supabase:deploy": "bash supabase/functions/deploy.sh"
+    "dev": "cd supabase/functions/mcp-server && deno task dev",
+    "deploy": "cd supabase/functions/mcp-server && deno task deploy"
   },
   "imports": {
     "@std/path": "jsr:@std/path@^1.0.8",

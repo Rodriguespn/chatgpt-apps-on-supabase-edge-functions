@@ -1,7 +1,7 @@
 {
   "tasks": {
-    "dev": "deno run --allow-net --allow-read --allow-env --watch src/index.ts",
-    "start": "deno run --allow-net --allow-read --allow-env src/index.ts"
+    "dev": "supabase functions serve mcp-server --no-verify-jwt",
+    "deploy": "supabase functions deploy mcp-server --no-verify-jwt"
   },
   "imports": {
     "@std/path": "jsr:@std/path@^1.0.8",
