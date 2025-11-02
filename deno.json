@@ -4,7 +4,9 @@
     "widget:build": "cd supabase/functions/mcp-server && deno task widget:build",
     "widget:preview": "cd supabase/functions/mcp-server && deno task widget:preview",
     "dev": "cd supabase/functions/mcp-server && deno task dev",
-    "deploy": "cd supabase/functions/mcp-server && deno task deploy"
+    "deploy": "cd supabase/functions/mcp-server && deno task deploy",
+    "inspector": "npx -y @mcpjam/inspector@latest",
+    "ngrok": "ngrok http 54321"
   },
   "imports": {
     "@std/path": "jsr:@std/path@^1.0.8",
