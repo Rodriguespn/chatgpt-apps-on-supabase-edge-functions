@@ -1,0 +1,51 @@
+.app {
+  min-height: 100vh;
+  padding: 12px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.recipe-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.recipe-button {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.recipe-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.recipe-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+}
+
+.recipe-button-urgent {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
+}
+
+.recipe-button-urgent:hover {
+  box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+}
+
+.recipe-button-urgent:active {
+  box-shadow: 0 2px 4px rgba(245, 87, 108, 0.3);
+}

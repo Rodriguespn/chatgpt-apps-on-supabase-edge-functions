@@ -5,11 +5,10 @@
  * that displays fridge contents stored on the server.
  */
 
-import { createUIResource, getAppsSdkAdapterScript } from 'npm:@mcp-ui/server@5.12.0-alpha.5';
-import type { UIResource } from 'npm:@mcp-ui/server@5.12.0-alpha.5';
+import { createUIResource, getAppsSdkAdapterScript, type UIResource } from '@mcp-ui/server';
 import type { FridgeItem, ItemStatus, ItemCategory, QuantityUnit } from '../types/fridge.ts';
 import { mockFridgeData } from '../data/mockFridgeData.ts';
-import { dirname, join } from 'jsr:@std/path@^1.0.8';
+import { dirname, join } from '@std/path';
 
 const __dirname = dirname(new URL(import.meta.url).pathname);
 
@@ -45,7 +44,7 @@ export function getWidgetHTML(): string {
 
   // Read the built widget files from widget/dist/
   // For edge functions, the path is relative to the function root
-  const widgetDistPath = join(__dirname, '../../widget/dist');
+  const widgetDistPath = join(__dirname, '../../widget/dist/assets');
 
   let widgetCSS = '';
   let widgetJS = '';
@@ -103,7 +102,7 @@ export function getWidgetHTML(): string {
  * Tool handler for the fridge widget
  * Returns the fridge data stored on the server as JSON with UI resource
  */
-export async function handleFridgeWidget() {
+export function handleFridgeWidget() {
   // Get fridge data from server storage (mock for now)
   const fridgeData = mockFridgeData;
 
@@ -162,7 +161,7 @@ export async function handleFridgeWidgetResource(): Promise<{
 /**
  * Tool handler for adding an item to the fridge
  */
-export async function handleAddItem(params: {
+export function handleAddItem(params: {
   name: string;
   category: ItemCategory;
   quantity: number;

@@ -1,7 +1,11 @@
 {
+  "lock": false,
   "tasks": {
-    "dev": "supabase functions serve mcp-server --no-verify-jwt",
-    "deploy": "supabase functions deploy mcp-server --no-verify-jwt"
+    "widget:dev": "cd widget && deno task dev",
+    "widget:build": "cd widget && deno task build",
+    "widget:preview": "cd widget && deno task preview",
+    "dev": "deno task widget:build && supabase functions serve mcp-server --no-verify-jwt",
+    "deploy": "deno task widget:build && supabase functions deploy mcp-server --no-verify-jwt"
   },
   "imports": {
     "@std/path": "jsr:@std/path@^1.0.8",

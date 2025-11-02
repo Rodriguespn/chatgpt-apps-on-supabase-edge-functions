@@ -1,5 +1,8 @@
 {
   "tasks": {
+    "widget:dev": "cd supabase/functions/mcp-server && deno task widget:dev",
+    "widget:build": "cd supabase/functions/mcp-server && deno task widget:build",
+    "widget:preview": "cd supabase/functions/mcp-server && deno task widget:preview",
     "dev": "cd supabase/functions/mcp-server && deno task dev",
     "deploy": "cd supabase/functions/mcp-server && deno task deploy"
   },
