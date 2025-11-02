@@ -6,7 +6,7 @@
  */
 
 import { createUIResource, getAppsSdkAdapterScript, type UIResource } from '@mcp-ui/server';
-import type { FridgeItem, ItemStatus, ItemCategory, QuantityUnit } from '../types/fridge.ts';
+import type { FridgeItem, ItemCategory, ItemStatus, QuantityUnit } from '../types/fridge.ts';
 import { mockFridgeData } from '../data/mockFridgeData.ts';
 import { dirname, join } from '@std/path';
 
@@ -22,7 +22,9 @@ function calculateItemStatus(expirationDate?: string): ItemStatus {
 
   const now = new Date();
   const expiration = new Date(expirationDate);
-  const daysUntilExpiration = Math.floor((expiration.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  const daysUntilExpiration = Math.floor(
+    (expiration.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+  );
 
   if (daysUntilExpiration < 0) {
     return 'expired';
@@ -132,6 +134,7 @@ export function handleFridgeWidget() {
  * Resource handler for the fridge widget
  * Returns the widget HTML as a resource (for direct resource requests)
  */
+// deno-lint-ignore require-await
 export async function handleFridgeWidgetResource(): Promise<{
   contents: Array<UIResource['resource']>;
 }> {
@@ -145,9 +148,9 @@ export async function handleFridgeWidgetResource(): Promise<{
     encoding: 'text',
     adapters: {
       appsSdk: {
-        enabled: true
-      }
-    }
+        enabled: true,
+      },
+    },
   });
 
   // Extract the resource object from the UIResource
@@ -204,7 +207,7 @@ export function handleAddItem(params: {
   }
 
   // Find the zone and add the item
-  const zone = mockFridgeData.fridge.zones.find(z => z.id === targetZoneId);
+  const zone = mockFridgeData.fridge.zones.find((z) => z.id === targetZoneId);
   if (zone) {
     zone.items.push(newItem);
   } else {
@@ -224,7 +227,9 @@ export function handleAddItem(params: {
     content: [
       {
         type: 'text',
-        text: `Successfully added "${params.name}" to the fridge. The item has been placed in ${zone?.name || 'the top shelf'} with status: ${newItem.status}.`,
+        text: `Successfully added "${params.name}" to the fridge. The item has been placed in ${
+          zone?.name || 'the top shelf'
+        } with status: ${newItem.status}.`,
       },
     ],
   };

@@ -11,16 +11,14 @@ function FridgeView({ fridgeData }: FridgeViewProps) {
   const lastUpdated = new Date(fridge.lastUpdated).toLocaleString();
 
   return (
-    <div className="fridge-view">
-      <header className="fridge-header">
-        <h1 className="fridge-name">{fridge.name}</h1>
-        <p className="last-updated">Last updated: {lastUpdated}</p>
+    <div className='fridge-view'>
+      <header className='fridge-header'>
+        <h1 className='fridge-name'>{fridge.name}</h1>
+        <p className='last-updated'>Last updated: {lastUpdated}</p>
       </header>
 
-      <div className="zones-container">
-        {fridge.zones.map((zone) => (
-          <ZoneCard key={zone.id} zone={zone} />
-        ))}
+      <div className='zones-container'>
+        {fridge.zones.map((zone) => <ZoneCard key={zone.id} zone={zone} />)}
       </div>
     </div>
   );

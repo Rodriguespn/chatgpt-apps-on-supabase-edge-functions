@@ -154,6 +154,7 @@ ngrok will provide you with a public URL like: `https://abc123.ngrok.io`
 #### Step 3: Test the Integration
 
 In ChatGPT, try asking:
+
 - "What's in my fridge?"
 - "Show me my fridge contents"
 - "Add milk to my fridge"

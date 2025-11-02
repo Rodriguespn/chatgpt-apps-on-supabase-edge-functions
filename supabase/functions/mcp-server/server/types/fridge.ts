@@ -151,7 +151,11 @@ export const FridgeDataJsonSchema = {
       properties: {
         id: { type: 'string', description: 'Unique identifier for the fridge' },
         name: { type: 'string', description: 'Display name of the fridge' },
-        lastUpdated: { type: 'string', format: 'date-time', description: 'ISO 8601 datetime of last update' },
+        lastUpdated: {
+          type: 'string',
+          format: 'date-time',
+          description: 'ISO 8601 datetime of last update',
+        },
         zones: {
           type: 'array',
           description: 'Zones/compartments in the fridge',
@@ -164,7 +168,7 @@ export const FridgeDataJsonSchema = {
               type: {
                 type: 'string',
                 enum: ['shelf', 'drawer', 'door', 'freezer'],
-                description: 'Type of compartment'
+                description: 'Type of compartment',
               },
               temperature: { type: 'number', description: 'Temperature in Celsius (optional)' },
               items: {
@@ -190,41 +194,53 @@ export const FridgeDataJsonSchema = {
                         'eggs',
                         'bakery',
                         'frozen',
-                        'other'
+                        'other',
                       ],
-                      description: 'Category classification'
+                      description: 'Category classification',
                     },
                     quantity: {
                       type: 'object',
                       required: ['value', 'unit'],
                       description: 'Quantity information',
                       properties: {
-                        value: { type: 'number', minimum: 0, description: 'Numeric value (must be positive)' },
+                        value: {
+                          type: 'number',
+                          minimum: 0,
+                          description: 'Numeric value (must be positive)',
+                        },
                         unit: {
                           type: 'string',
                           enum: ['count', 'g', 'kg', 'ml', 'l', 'oz', 'lb', 'package', 'container'],
-                          description: 'Unit of measurement'
-                        }
-                      }
+                          description: 'Unit of measurement',
+                        },
+                      },
                     },
-                    expirationDate: { type: 'string', format: 'date-time', description: 'ISO 8601 datetime when the item expires' },
-                    addedDate: { type: 'string', format: 'date-time', description: 'ISO 8601 datetime when the item was added' },
+                    expirationDate: {
+                      type: 'string',
+                      format: 'date-time',
+                      description: 'ISO 8601 datetime when the item expires',
+                    },
+                    addedDate: {
+                      type: 'string',
+                      format: 'date-time',
+                      description: 'ISO 8601 datetime when the item was added',
+                    },
                     status: {
                       type: 'string',
                       enum: ['fresh', 'expiring-soon', 'expired'],
-                      description: 'Current status of the item'
+                      description: 'Current status of the item',
                     },
                     image: { type: 'string', description: 'Image URL or base64 encoded image' },
                     barcode: { type: 'string', description: 'Product barcode' },
-                    notes: { type: 'string', description: 'Additional notes about the item' }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                    notes: { type: 'string', description: 'Additional notes about the item' },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   },
-  required: ['fridge']
+  required: ['fridge'],
 } as const;

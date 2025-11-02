@@ -1,52 +1,106 @@
 /**
  * Supabase Edge Function for MCP Fridge Widget Server
  *
- * This edge function exposes the MCP server over HTTP.
- * It handles tool calls and serves UI resources.
+ * This implementation uses the `supabase-mcp-handler` helper to wire up
+ * the MCP HTTP endpoints (/mcp, /health) and CORS, while we register tools
+ * and resources directly on the underlying mcp-lite server instance.
  */
 
-import { Hono, type Context } from 'hono';
-import { serveStatic } from 'hono/deno';
-import { cors } from 'hono/cors';
-import { McpServer, StreamableHttpTransport } from 'mcp-lite';
-import { z } from 'zod';
+import { createEdgeMCPServer } from '@rodriguespn/supabase-mcp-handler';
+// Import server modules (tool/resource handlers)
+import {
+  handleAddItem,
+  handleFridgeWidget,
+  handleFridgeWidgetResource,
+} from './server/tools/fridgeWidget.ts';
+import type { ItemCategory, QuantityUnit } from './server/types/fridge.ts';
 
-// Import server modules
-import { handleFridgeWidget, handleFridgeWidgetResource, handleAddItem } from './server/tools/fridgeWidget.ts';
-
-// Create the MCP server using mcp-lite
-export const server = new McpServer({
+// Initialize the MCP server and request handler for Deno.serve
+const { server, serve } = createEdgeMCPServer({
   name: 'fridge-widget-server',
+  basePath: '/mcp-server',
   version: '1.0.0',
-  schemaAdapter: (schema) => z.toJSONSchema(schema as z.ZodType),
+  // CORS is enabled by default; customize origins if needed, e.g. corsOrigins: ["*"]
+  enableLogging: true,
 });
 
-// Define tool: show_fridge
+// Define tool: show_fridge (no input parameters)
 server.tool('show_fridge', {
   description: 'Display the contents of the fridge stored on the server in an interactive widget',
-  inputSchema: z.object({}),
-  _meta: { "openai/outputTemplate": "ui://fridge-widget" },
+  inputSchema: {
+    type: 'object',
+    properties: {},
+  },
+  _meta: { 'openai/outputTemplate': 'ui://fridge-widget' },
   handler: async () => {
+    // deno-lint-ignore no-explicit-any
     return await handleFridgeWidget() as any;
   },
 });
 
-// Define tool: add_fridge_item
-const AddFridgeItemSchema = z.object({
-  name: z.string().describe('Name of the item to add'),
-  category: z.enum(['dairy', 'meat', 'seafood', 'vegetables', 'fruits', 'beverages', 'condiments', 'leftovers', 'eggs', 'bakery', 'frozen', 'other']).describe('Category of the item'),
-  quantity: z.number().positive().describe('Quantity value (must be positive)'),
-  unit: z.enum(['count', 'g', 'kg', 'ml', 'l', 'oz', 'lb', 'package', 'container']).describe('Unit of measurement'),
-  zoneId: z.string().optional().describe('Optional zone ID where the item should be stored (defaults based on category)'),
-  expirationDate: z.string().datetime().optional().describe('ISO 8601 datetime when the item expires (optional)'),
-  notes: z.string().optional().describe('Additional notes about the item (optional)'),
-  barcode: z.string().optional().describe('Product barcode (optional)'),
-});
+// Define tool: add_fridge_item (JSON Schema to avoid zod dependency)
+const AddFridgeItemSchemaJson = {
+  type: 'object',
+  properties: {
+    name: { type: 'string', description: 'Name of the item to add' },
+    category: {
+      type: 'string',
+      enum: [
+        'dairy',
+        'meat',
+        'seafood',
+        'vegetables',
+        'fruits',
+        'beverages',
+        'condiments',
+        'leftovers',
+        'eggs',
+        'bakery',
+        'frozen',
+        'other',
+      ],
+      description: 'Category of the item',
+    },
+    quantity: {
+      type: 'number',
+      exclusiveMinimum: 0,
+      description: 'Quantity value (must be positive)',
+    },
+    unit: {
+      type: 'string',
+      enum: ['count', 'g', 'kg', 'ml', 'l', 'oz', 'lb', 'package', 'container'],
+      description: 'Unit of measurement',
+    },
+    zoneId: {
+      type: 'string',
+      description: 'Optional zone ID where the item should be stored (defaults based on category)',
+    },
+    expirationDate: {
+      type: 'string',
+      format: 'date-time',
+      description: 'ISO 8601 datetime when the item expires (optional)',
+    },
+    notes: { type: 'string', description: 'Additional notes about the item (optional)' },
+    barcode: { type: 'string', description: 'Product barcode (optional)' },
+  },
+  required: ['name', 'category', 'quantity', 'unit'],
+  additionalProperties: false,
+} as const;
 
 server.tool('add_fridge_item', {
   description: 'Add a new item to the fridge inventory',
-  inputSchema: AddFridgeItemSchema,
-  handler: async (args) => {
+  inputSchema: AddFridgeItemSchemaJson,
+  handler: async (args: {
+    name: string;
+    category: ItemCategory;
+    quantity: number;
+    unit: QuantityUnit;
+    zoneId?: string;
+    expirationDate?: string;
+    notes?: string;
+    barcode?: string;
+  }) => {
+    // deno-lint-ignore no-explicit-any
     return await handleAddItem(args) as any;
   },
 });
@@ -60,56 +114,10 @@ server.resource(
     mimeType: 'text/html+skybridge',
   },
   async () => {
-    return await handleFridgeWidgetResource() as any
-  }
+    // deno-lint-ignore no-explicit-any
+    return await handleFridgeWidgetResource() as any;
+  },
 );
 
-// Create Hono app
-const app = new Hono();
-
-const mcpApp = new Hono();
-
-// Add CORS middleware
-mcpApp.use('*', cors());
-
-// Serve static files with proper MIME types
-mcpApp.use('/static/*', serveStatic({
-  root: './',
-  rewriteRequestPath: (path: string) => path.replace(/^\/static/, '/static')
-}));
-
-mcpApp.get("/", (c) => {
-  return c.json({
-    message: "MCP Server on Supabase Edge Functions",
-    endpoints: {
-      mcp: "/mcp",
-      health: "/health",
-    },
-  });
-});
-
-// Health check endpoint
-mcpApp.get('/health', (c: Context) => {
-  return c.json({ status: 'ok', server: 'fridge-widget-mcp' });
-});
-
-// MCP endpoint using StreamableHTTP transport from mcp-lite
-const transport = new StreamableHttpTransport();
-const mcpHandler = transport.bind(server);
-
-mcpApp.all('/mcp', async (c: Context) => {
-  console.info('New MCP request received');
-
-  // Hono's request is already a standard Request object
-  const request = c.req.raw;
-
-  // Handle with mcp-lite
-  const response = await mcpHandler(request);
-
-  // Return the response directly - Hono will handle streaming
-  return response;
-});
-
-app.route('/mcp-server', mcpApp);
-
-Deno.serve(app.fetch);
+// One-line deployment to Supabase Edge Functions
+Deno.serve(serve());

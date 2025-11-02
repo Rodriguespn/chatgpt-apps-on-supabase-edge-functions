@@ -21,12 +21,12 @@ export const mockFridgeData: FridgeData = {
             category: 'dairy',
             quantity: {
               value: 1,
-              unit: 'l'
+              unit: 'l',
             },
             expirationDate: '2025-10-20T00:00:00Z',
             addedDate: '2025-10-10T08:00:00Z',
             status: 'fresh',
-            barcode: '012345678901'
+            barcode: '012345678901',
           },
           {
             id: 'item-002',
@@ -34,12 +34,12 @@ export const mockFridgeData: FridgeData = {
             category: 'dairy',
             quantity: {
               value: 200,
-              unit: 'g'
+              unit: 'g',
             },
             expirationDate: '2025-10-15T00:00:00Z',
             addedDate: '2025-10-08T12:00:00Z',
             status: 'expiring-soon',
-            notes: 'Sharp cheddar'
+            notes: 'Sharp cheddar',
           },
           {
             id: 'item-003',
@@ -47,13 +47,13 @@ export const mockFridgeData: FridgeData = {
             category: 'dairy',
             quantity: {
               value: 500,
-              unit: 'g'
+              unit: 'g',
             },
             expirationDate: '2025-10-18T00:00:00Z',
             addedDate: '2025-10-09T00:00:00Z',
-            status: 'fresh'
-          }
-        ]
+            status: 'fresh',
+          },
+        ],
       },
       {
         id: 'zone-middle-shelf',
@@ -67,12 +67,12 @@ export const mockFridgeData: FridgeData = {
             category: 'meat',
             quantity: {
               value: 500,
-              unit: 'g'
+              unit: 'g',
             },
             expirationDate: '2025-10-14T00:00:00Z',
             addedDate: '2025-10-12T00:00:00Z',
             status: 'expiring-soon',
-            notes: 'Organic, free-range'
+            notes: 'Organic, free-range',
           },
           {
             id: 'item-005',
@@ -80,12 +80,12 @@ export const mockFridgeData: FridgeData = {
             category: 'leftovers',
             quantity: {
               value: 1,
-              unit: 'container'
+              unit: 'container',
             },
             expirationDate: '2025-10-14T00:00:00Z',
             addedDate: '2025-10-11T19:30:00Z',
             status: 'expiring-soon',
-            notes: 'Spaghetti carbonara from dinner'
+            notes: 'Spaghetti carbonara from dinner',
           },
           {
             id: 'item-006',
@@ -93,13 +93,13 @@ export const mockFridgeData: FridgeData = {
             category: 'seafood',
             quantity: {
               value: 2,
-              unit: 'count'
+              unit: 'count',
             },
             expirationDate: '2025-10-13T00:00:00Z',
             addedDate: '2025-10-11T00:00:00Z',
-            status: 'expired'
-          }
-        ]
+            status: 'expired',
+          },
+        ],
       },
       {
         id: 'zone-bottom-shelf',
@@ -113,12 +113,12 @@ export const mockFridgeData: FridgeData = {
             category: 'beverages',
             quantity: {
               value: 1,
-              unit: 'l'
+              unit: 'l',
             },
             expirationDate: '2025-10-25T00:00:00Z',
             addedDate: '2025-10-10T00:00:00Z',
             status: 'fresh',
-            notes: 'Freshly squeezed'
+            notes: 'Freshly squeezed',
           },
           {
             id: 'item-008',
@@ -126,13 +126,13 @@ export const mockFridgeData: FridgeData = {
             category: 'beverages',
             quantity: {
               value: 6,
-              unit: 'count'
+              unit: 'count',
             },
             addedDate: '2025-10-05T00:00:00Z',
             status: 'fresh',
-            notes: 'IPA craft beer'
-          }
-        ]
+            notes: 'IPA craft beer',
+          },
+        ],
       },
       {
         id: 'zone-veggie-drawer',
@@ -146,11 +146,11 @@ export const mockFridgeData: FridgeData = {
             category: 'vegetables',
             quantity: {
               value: 6,
-              unit: 'count'
+              unit: 'count',
             },
             addedDate: '2025-10-11T00:00:00Z',
             status: 'fresh',
-            notes: 'Organic'
+            notes: 'Organic',
           },
           {
             id: 'item-010',
@@ -158,12 +158,12 @@ export const mockFridgeData: FridgeData = {
             category: 'vegetables',
             quantity: {
               value: 1,
-              unit: 'count'
+              unit: 'count',
             },
             expirationDate: '2025-10-14T00:00:00Z',
             addedDate: '2025-10-12T00:00:00Z',
             status: 'expiring-soon',
-            notes: 'Romaine lettuce'
+            notes: 'Romaine lettuce',
           },
           {
             id: 'item-011',
@@ -171,11 +171,11 @@ export const mockFridgeData: FridgeData = {
             category: 'vegetables',
             quantity: {
               value: 5,
-              unit: 'count'
+              unit: 'count',
             },
             expirationDate: '2025-10-16T00:00:00Z',
             addedDate: '2025-10-10T00:00:00Z',
-            status: 'fresh'
+            status: 'fresh',
           },
           {
             id: 'item-012',
@@ -183,14 +183,14 @@ export const mockFridgeData: FridgeData = {
             category: 'vegetables',
             quantity: {
               value: 3,
-              unit: 'count'
+              unit: 'count',
             },
             expirationDate: '2025-10-17T00:00:00Z',
             addedDate: '2025-10-11T00:00:00Z',
             status: 'fresh',
-            notes: 'Red and yellow'
-          }
-        ]
+            notes: 'Red and yellow',
+          },
+        ],
       },
       {
         id: 'zone-fruit-drawer',
@@ -203,11 +203,11 @@ export const mockFridgeData: FridgeData = {
             category: 'fruits',
             quantity: {
               value: 4,
-              unit: 'count'
+              unit: 'count',
             },
             addedDate: '2025-10-09T00:00:00Z',
             status: 'fresh',
-            notes: 'Gala apples'
+            notes: 'Gala apples',
           },
           {
             id: 'item-014',
@@ -215,11 +215,11 @@ export const mockFridgeData: FridgeData = {
             category: 'fruits',
             quantity: {
               value: 1,
-              unit: 'package'
+              unit: 'package',
             },
             expirationDate: '2025-10-15T00:00:00Z',
             addedDate: '2025-10-12T00:00:00Z',
-            status: 'expiring-soon'
+            status: 'expiring-soon',
           },
           {
             id: 'item-015',
@@ -227,14 +227,14 @@ export const mockFridgeData: FridgeData = {
             category: 'fruits',
             quantity: {
               value: 500,
-              unit: 'g'
+              unit: 'g',
             },
             expirationDate: '2025-10-19T00:00:00Z',
             addedDate: '2025-10-11T00:00:00Z',
             status: 'fresh',
-            notes: 'Green grapes'
-          }
-        ]
+            notes: 'Green grapes',
+          },
+        ],
       },
       {
         id: 'zone-door-top',
@@ -247,11 +247,11 @@ export const mockFridgeData: FridgeData = {
             category: 'condiments',
             quantity: {
               value: 1,
-              unit: 'container'
+              unit: 'container',
             },
             expirationDate: '2026-01-15T00:00:00Z',
             addedDate: '2025-09-01T00:00:00Z',
-            status: 'fresh'
+            status: 'fresh',
           },
           {
             id: 'item-017',
@@ -259,12 +259,12 @@ export const mockFridgeData: FridgeData = {
             category: 'condiments',
             quantity: {
               value: 1,
-              unit: 'container'
+              unit: 'container',
             },
             expirationDate: '2025-12-20T00:00:00Z',
             addedDate: '2025-08-15T00:00:00Z',
             status: 'fresh',
-            notes: 'Dijon mustard'
+            notes: 'Dijon mustard',
           },
           {
             id: 'item-018',
@@ -272,13 +272,13 @@ export const mockFridgeData: FridgeData = {
             category: 'condiments',
             quantity: {
               value: 1,
-              unit: 'container'
+              unit: 'container',
             },
             expirationDate: '2025-11-30T00:00:00Z',
             addedDate: '2025-09-10T00:00:00Z',
-            status: 'fresh'
-          }
-        ]
+            status: 'fresh',
+          },
+        ],
       },
       {
         id: 'zone-door-middle',
@@ -291,12 +291,12 @@ export const mockFridgeData: FridgeData = {
             category: 'dairy',
             quantity: {
               value: 250,
-              unit: 'g'
+              unit: 'g',
             },
             expirationDate: '2025-10-22T00:00:00Z',
             addedDate: '2025-10-08T00:00:00Z',
             status: 'fresh',
-            notes: 'Salted butter'
+            notes: 'Salted butter',
           },
           {
             id: 'item-020',
@@ -304,14 +304,14 @@ export const mockFridgeData: FridgeData = {
             category: 'eggs',
             quantity: {
               value: 10,
-              unit: 'count'
+              unit: 'count',
             },
             expirationDate: '2025-10-25T00:00:00Z',
             addedDate: '2025-10-07T00:00:00Z',
             status: 'fresh',
-            notes: 'Free-range'
-          }
-        ]
+            notes: 'Free-range',
+          },
+        ],
       },
       {
         id: 'zone-door-bottom',
@@ -324,11 +324,11 @@ export const mockFridgeData: FridgeData = {
             category: 'beverages',
             quantity: {
               value: 6,
-              unit: 'count'
+              unit: 'count',
             },
             addedDate: '2025-10-12T00:00:00Z',
             status: 'fresh',
-            notes: 'Sparkling water'
+            notes: 'Sparkling water',
           },
           {
             id: 'item-022',
@@ -336,14 +336,14 @@ export const mockFridgeData: FridgeData = {
             category: 'beverages',
             quantity: {
               value: 1,
-              unit: 'l'
+              unit: 'l',
             },
             expirationDate: '2025-10-28T00:00:00Z',
             addedDate: '2025-10-11T00:00:00Z',
-            status: 'fresh'
-          }
-        ]
-      }
-    ]
-  }
+            status: 'fresh',
+          },
+        ],
+      },
+    ],
+  },
 };

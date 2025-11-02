@@ -8,9 +8,8 @@
     "deploy": "deno task widget:build && supabase functions deploy mcp-server --no-verify-jwt"
   },
   "imports": {
+    "@rodriguespn/supabase-mcp-handler": "jsr:@rodriguespn/supabase-mcp-handler@^0.0.2",
     "@std/path": "jsr:@std/path@^1.0.8",
-    "hono": "jsr:@hono/hono@^4.6.16",
-    "hono/": "jsr:/@hono/hono@^4.6.16/",
     "mcp-lite": "npm:mcp-lite@^0.8.2",
     "zod": "npm:zod@^4.1.12",
     "@mcp-ui/server": "npm:@mcp-ui/server@5.12.0-alpha.5"

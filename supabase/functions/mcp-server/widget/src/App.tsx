@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { FridgeData } from './types/fridge';
 import FridgeView from './components/FridgeView';
 import './App.css';
@@ -33,14 +33,14 @@ function App({ fridgeData: fridgeDataProp }: AppProps) {
       const resizeObserver = new ResizeObserver((entries) => {
         console.log('[Widget Debug] ResizeObserver entries:', entries);
         entries.forEach((entry) => {
-          window.parent.postMessage(
+          globalThis.parent.postMessage(
             {
-              type: "ui-size-change",
+              type: 'ui-size-change',
               payload: {
                 height: entry.contentRect.height,
               },
             },
-            "*"
+            '*',
           );
         });
       });
@@ -58,7 +58,7 @@ function App({ fridgeData: fridgeDataProp }: AppProps) {
         origin: event.origin,
         type: event.data?.type,
         data: event.data,
-        fullEvent: event
+        fullEvent: event,
       });
 
       // Handle ui-lifecycle-iframe-render-data message
@@ -69,30 +69,36 @@ function App({ fridgeData: fridgeDataProp }: AppProps) {
         if (renderData) {
           // The fridge data is in renderData.toolOutput.fridge
           // Check if renderData.toolOutput.fridge exists and has the expected properties
-          if (renderData.toolOutput?.fridge && renderData.toolOutput.fridge.id && renderData.toolOutput.fridge.zones) {
+          if (
+            renderData.toolOutput?.fridge && renderData.toolOutput.fridge.id &&
+            renderData.toolOutput.fridge.zones
+          ) {
             console.log('[Widget Debug] Setting fridge data from renderData.toolOutput.fridge');
             // Wrap the fridge object in the FridgeData structure expected by FridgeView
             setFridgeData({ fridge: renderData.toolOutput.fridge } as FridgeData);
           } else {
-            console.log('[Widget Debug] renderData does not contain valid fridge data:', renderData);
+            console.log(
+              '[Widget Debug] renderData does not contain valid fridge data:',
+              renderData,
+            );
           }
         }
       }
     };
 
-    window.addEventListener('message', handleMessage);
+    globalThis.addEventListener('message', handleMessage);
     console.log('[Widget Debug] Message event listener registered');
 
     // Notify parent that widget is ready
     console.log('[Widget Debug] Sending ui-lifecycle-iframe-ready to parent');
-    window.parent.postMessage({ type: "ui-lifecycle-iframe-ready" }, "*");
+    globalThis.parent.postMessage({ type: 'ui-lifecycle-iframe-ready' }, '*');
 
     return () => {
       if (resizeObserverRef.current) {
         resizeObserverRef.current.disconnect();
         resizeObserverRef.current = null;
       }
-      window.removeEventListener('message', handleMessage);
+      globalThis.removeEventListener('message', handleMessage);
       console.log('[Widget Debug] Message event listener removed');
     };
   }, []);
@@ -113,36 +119,44 @@ function App({ fridgeData: fridgeDataProp }: AppProps) {
     const messageId = `prompt-${Date.now()}`;
     console.log('[Widget Debug] Sending prompt:', prompt);
 
-    window.parent.postMessage({
+    globalThis.parent.postMessage({
       type: 'prompt',
       messageId,
-      payload: { prompt }
+      payload: { prompt },
     }, '*');
   };
 
   const handleRecipeRequest = () => {
-    sendPrompt('Based on the current fridge contents, propose me some recipes I can make with these ingredients.');
+    sendPrompt(
+      'Based on the current fridge contents, propose me some recipes I can make with these ingredients.',
+    );
   };
 
   const handleExpiringRecipeRequest = () => {
-    sendPrompt('Based on the ingredients that are expiring soon in my fridge, propose me recipes that use these expiring ingredients to avoid food waste.');
+    sendPrompt(
+      'Based on the ingredients that are expiring soon in my fridge, propose me recipes that use these expiring ingredients to avoid food waste.',
+    );
   };
 
   if (!fridgeData) {
     return (
-      <div className="loading-container">
+      <div className='loading-container'>
         <p>Loading fridge data...</p>
       </div>
     );
   }
 
   return (
-    <div ref={appRef} className="app">
-      <div className="recipe-actions">
-        <button className="recipe-button" onClick={handleRecipeRequest}>
+    <div ref={appRef} className='app'>
+      <div className='recipe-actions'>
+        <button className='recipe-button' type='button' onClick={handleRecipeRequest}>
           Propose me recipes
         </button>
-        <button className="recipe-button recipe-button-urgent" onClick={handleExpiringRecipeRequest}>
+        <button
+          className='recipe-button recipe-button-urgent'
+          type='button'
+          onClick={handleExpiringRecipeRequest}
+        >
           Recipes for expiring ingredients
         </button>
       </div>

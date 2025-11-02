@@ -34,6 +34,7 @@ A fridge is divided into zones (compartments/shelves). Each zone contains items.
 ```
 
 ### Zone Types
+
 - **shelf**: Regular shelves in the main compartment
 - **drawer**: Vegetable/fruit drawers or storage drawers
 - **door**: Door storage compartments
@@ -64,6 +65,7 @@ Items represent individual food products or containers stored in the fridge.
 ### Categories
 
 Suggested categories (extensible):
+
 - `dairy` - Milk, cheese, yogurt, butter
 - `meat` - Fresh meat, poultry
 - `seafood` - Fish, shellfish
@@ -80,6 +82,7 @@ Suggested categories (extensible):
 ### Quantity Units
 
 Common units (extensible):
+
 - `count` - Individual items (e.g., "3 eggs")
 - `g` - Grams
 - `kg` - Kilograms
@@ -93,6 +96,7 @@ Common units (extensible):
 ### Item Status
 
 Status is automatically calculated based on `expirationDate`:
+
 - **fresh**: More than 3 days until expiration (or no expiration date)
 - **expiring-soon**: 1-3 days until expiration
 - **expired**: Past expiration date
@@ -210,6 +214,7 @@ Status is automatically calculated based on `expirationDate`:
 ## Future Extensions
 
 Possible future enhancements to consider:
+
 - User-defined custom categories
 - Shopping list integration (reorder items)
 - Nutritional information
